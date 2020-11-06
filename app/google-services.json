@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "574857422344",
+    "firebase_url": "https://tiendapp-6f71f.firebaseio.com",
+    "project_id": "tiendapp-6f71f",
+    "storage_bucket": "tiendapp-6f71f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574857422344:android:9f5c902ee0682a05fa93bd",
+        "android_client_info": {
+          "package_name": "com.unicordoba.tiendapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574857422344-eaavq89ndo3j33hjjqkads5crmddbc4b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAH_6L0FGcEvEj7wtmxMkkLk1U-dl9Az6k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574857422344-eaavq89ndo3j33hjjqkads5crmddbc4b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

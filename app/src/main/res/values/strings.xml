@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">TiendApp</string>
     <string name="crear_producto">Crear Producto</string>
+    <string name="email">Email</string>
+    <string name="registrar_email">Escriba su email</string>
+    <string name="registrar_usuario">Registrar Usuario</string>
+    <string name="ingrese_el_telefono">Ingrese el telefono</string>
+    <string name="ingrese_la_contrase_a">Ingrese la contraseña</string>
+    <string name="ingrese_nuevamente_la_contrase_a">Ingrese nuevamente la contraseña</string>
 </resources>

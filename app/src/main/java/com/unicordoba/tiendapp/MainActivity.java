@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
         btnCrearCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(MainActivity.this, RegistroUsuarioActivity.class);
+                startActivity(intent);
             }
         });
 

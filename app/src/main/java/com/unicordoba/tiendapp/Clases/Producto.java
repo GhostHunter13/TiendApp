@@ -1,6 +1,11 @@
 package com.unicordoba.tiendapp.Clases;
 
-public class Producto {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public class Producto implements Serializable {
 
     private String nombre;
     private int precio;
@@ -54,4 +59,5 @@ public class Producto {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+
 }

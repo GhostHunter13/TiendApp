@@ -6,10 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.unicordoba.tiendapp.Clases.Producto;
 import com.unicordoba.tiendapp.R;
 
@@ -18,9 +20,19 @@ import java.util.ArrayList;
 public class ProductoAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Producto> listaProductos;
+    private OnItemClickListener onItemClickListener;
+
+    public void setListaProductos(ArrayList<Producto> listaProductos){
+        this.listaProductos = listaProductos;
+        notifyDataSetChanged();
+    }
 
     public ProductoAdapter(ArrayList<Producto> listadoProductos){
         this.listaProductos = listadoProductos;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
     class ProductoViewHolder extends RecyclerView.ViewHolder {
@@ -40,10 +52,52 @@ public class ProductoAdapter extends RecyclerView.Adapter {
 
         }
 
-        public void cargarDatos(Producto producto){
+        public void cargarDatos(final Producto producto){
             tvNombre.setText(producto.getNombre());
             tvDescripcion.setText(producto.getDescripcion());
             tvPrecio.setText("$"+producto.getPrecio());
+
+            Glide.with(itemView.getContext()).load(producto.getUrlImagen()).into(ivProducto);
+
+            if( onItemClickListener != null ){
+
+                tvNombre.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onItemClickListener.onItemClickNombre(producto, getAdapterPosition());
+                    }
+                });
+
+                tvDescripcion.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onItemClickListener.onItemClickDescripcion(producto, getAdapterPosition());
+                    }
+                });
+
+                tvPrecio.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onItemClickListener.onItemClickImagen(producto, getAdapterPosition());
+                    }
+                });
+
+                ivProducto.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onItemClickListener.onItemClickImagen(producto, getAdapterPosition());
+                    }
+                });
+
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onItemClickListener.onItemClick(producto, getAdapterPosition());
+                    }
+                });
+
+            }
+
         }
 
     }
@@ -66,4 +120,15 @@ public class ProductoAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return listaProductos.size();
     }
+
+    public interface OnItemClickListener{
+
+        void onItemClick(Producto producto, int posicion);
+        void onItemClickNombre(Producto producto, int posicion);
+        void onItemClickImagen(Producto producto, int posicion);
+        void onItemClickDescripcion(Producto producto, int posicion);
+        void onItemClicKPrecio(Producto producto, int posicion);
+
+    }
+
 }
