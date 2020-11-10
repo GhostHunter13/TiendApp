@@ -8,12 +8,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,6 +25,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.unicordoba.tiendapp.Adapters.ProductoAdapter;
 import com.unicordoba.tiendapp.Clases.Producto;
+import com.unicordoba.tiendapp.Interfaces.TiendaAppCallback;
+import com.unicordoba.tiendapp.Repositorios.ProductoRepositorios;
 
 import org.w3c.dom.Document;
 
@@ -35,24 +41,59 @@ public class ListadoProductosActivity extends AppCompatActivity {
     private ArrayList<Producto> listaProductos;
     private FirebaseFirestore firestore;
     private ProductoAdapter adapterProductos;
-
+    private FirebaseAuth firebaseAuth;
+    private ProductoRepositorios productoRepositorios;
     public static final String PRODUCTO_INFO = "producto";
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseAuth = FirebaseAuth.getInstance();
+        if( firebaseAuth.getCurrentUser() == null ){
+            Intent intent = new Intent(ListadoProductosActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.principal_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.mi_cerrar_sesion:
+                firebaseAuth.signOut();
+                Intent intent = new Intent(ListadoProductosActivity.this, MainActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listado_productos);
+
         listaProductos = new ArrayList<>();
+
         firestore = FirebaseFirestore.getInstance();
-//      cargarProductos();
-        datosBD();
-        onCollectionChange();
+        productoRepositorios = new ProductoRepositorios(ListadoProductosActivity.this);
+
         setDatos();
 
         rvListadoProductos.setLayoutManager(new LinearLayoutManager(this));
         rvListadoProductos.setHasFixedSize(true);
 
         adapterProductos = new ProductoAdapter(listaProductos);
+        actualizarLista();
+
         adapterProductos.setOnItemClickListener(new ProductoAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Producto producto, int posicion) {
@@ -87,6 +128,34 @@ public class ListadoProductosActivity extends AppCompatActivity {
 
     }
 
+    private void actualizarLista(){
+        productoRepositorios.obtenerTodosFS(new TiendaAppCallback<ArrayList<Producto>>() {
+            @Override
+            public void correcto(ArrayList<Producto> respuesta) {
+                adapterProductos.setListaProductos(respuesta);
+            }
+
+            @Override
+            public void error(Exception exception) {
+                Log.d("ListadoProductos", "error: "+ exception.toString());
+            }
+        });
+    }
+
+    private void setDatos() {
+        btnCrearProducto = findViewById(R.id.btnCrearProducto);
+        rvListadoProductos = findViewById(R.id.rvListaProductos);
+
+
+        btnCrearProducto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
+
+    @Deprecated
     private void datosBD() {
         firestore.collection("productos").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -104,6 +173,7 @@ public class ListadoProductosActivity extends AppCompatActivity {
         });
     }
 
+    @Deprecated
     private void onCollectionChange(){
 
         firestore.collection("productos").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -120,6 +190,7 @@ public class ListadoProductosActivity extends AppCompatActivity {
 
     }
 
+    @Deprecated
     private void cargarProductos() {
         Producto p1 = new Producto("PC Asus", 2500, "https://img2.freepng.es/20180516/jbw/kisspng-laptop-asus-computer-5afc7ce68f8697.3850485815264964865879.jpg", "PC Portatil");
         listaProductos.add(p1);
@@ -135,18 +206,5 @@ public class ListadoProductosActivity extends AppCompatActivity {
         p3.setDescripcion("Mouse ");
         listaProductos.add(p3);
 
-    }
-
-    private void setDatos() {
-        btnCrearProducto = findViewById(R.id.btnCrearProducto);
-        rvListadoProductos = findViewById(R.id.rvListaProductos);
-
-
-        btnCrearProducto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
     }
 }
